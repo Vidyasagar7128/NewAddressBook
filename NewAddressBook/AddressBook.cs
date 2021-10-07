@@ -108,6 +108,27 @@ namespace NewAddressBook
 			}
 		}
 		/// <summary>
+		/// Delete Contact
+		/// </summary>
+		public void DeleteData()
+		{
+			Console.Write("Enter Name which do you want to Delete: ");
+			string delName = Console.ReadLine();
+			int index = 0;
+			foreach (Contact ct in arrayList)
+			{
+				if (ct.firstName == delName)
+					index = arrayList.IndexOf(ct);
+			}
+			for (int i = 0; i < arrayList.Count; i++)
+			{
+				if (arrayList[i] == arrayList[index])
+				{
+					arrayList.RemoveAt(i);
+				}
+			}
+		}
+		/// <summary>
 		/// Switch for Repeat Process
 		/// </summary>
 		public void repeat()
@@ -116,6 +137,7 @@ namespace NewAddressBook
 			Console.WriteLine("press 1 to create contact :");
 			Console.WriteLine("press 2 to print contacts :");
 			Console.WriteLine("press 3 to edit contacts :");
+			Console.WriteLine("press 4 to delete contact :");
 			Console.WriteLine("press 0 to exit program :");
 			int res = int.Parse(Console.ReadLine());
 			switch (res)
@@ -130,6 +152,10 @@ namespace NewAddressBook
 					break;
 				case 3:
 					editData();
+					repeat();
+					break;
+				case 4:
+					DeleteData();
 					repeat();
 					break;
 				case 0:
