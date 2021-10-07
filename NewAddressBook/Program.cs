@@ -7,6 +7,8 @@ namespace NewAddressBook
         static void Main(string[] args)
         {
             Console.WriteLine("AddressBook!");
+            AddressBook addressBook = new AddressBook();
+            addressBook.repeat();
         }
     }
 }
