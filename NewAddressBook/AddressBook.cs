@@ -97,15 +97,21 @@ namespace NewAddressBook
 			foreach (Contact ct in arrayList)
 			{
 				if (ct.firstName == editName)
+                {
 					index = arrayList.IndexOf(ct);
-			}
-			for (int i = 0; i < arrayList.Count; i++)
-			{
-				if (arrayList[i] == arrayList[index])
-				{
-					arrayList[i] = contact;
+					for (int i = 0; i < arrayList.Count; i++)
+					{
+						if (arrayList[i] == arrayList[index])
+						{
+							arrayList[i] = contact;
+						}
+					}
 				}
+                else
+					Console.WriteLine("Wrong Username");
+
 			}
+			
 		}
 		/// <summary>
 		/// Delete Contact
