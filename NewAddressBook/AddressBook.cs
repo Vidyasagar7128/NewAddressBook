@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace NewAddressBook
@@ -8,7 +9,6 @@ namespace NewAddressBook
 	class AddressBook
 	{
 		ArrayList arrayList = new ArrayList();
-
 		/// <summary>
 		/// Create Contact
 		/// </summary>
@@ -45,10 +45,34 @@ namespace NewAddressBook
 				email = email,
 			};
 			arrayList.Add(contact);
+			foreach(Contact ct in this.arrayList)
+            {
+                if (ct.firstName.Equals(firstName) && arrayList.Count !=1)
+                {
+					Console.WriteLine("Username already Exist!");
+					Del(arrayList.IndexOf(ct));
+					break;
+                }
+                else
+                {
+					Console.WriteLine("Data Added!");
+					break;
+                }
+            }
 		}
 		/// <summary>
-		/// Show Contact
+		/// Remove Duplicate Contact by username
 		/// </summary>
+		public void Del(int index)
+        {
+			for(int i = 0; i < arrayList.Count-1; i++)
+            {
+                if (arrayList[i].Equals(arrayList[index]))
+                {
+					this.arrayList.RemoveAt(arrayList.Count-1);
+                }
+            }
+        }
 		public void showAllContacts()
 		{
 			foreach (Contact data in arrayList)
@@ -109,9 +133,7 @@ namespace NewAddressBook
 				}
                 else
 					Console.WriteLine("Wrong Username");
-
 			}
-			
 		}
 		/// <summary>
 		/// Delete Contact
@@ -131,6 +153,7 @@ namespace NewAddressBook
 				if (arrayList[i] == arrayList[index])
 				{
 					arrayList.RemoveAt(i);
+					Console.WriteLine(i);
 				}
 			}
 		}
