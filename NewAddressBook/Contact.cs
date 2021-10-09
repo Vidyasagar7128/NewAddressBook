@@ -14,5 +14,10 @@ namespace NewAddressBook
 		public long zip { set; get; }
 		public long phone { set; get; }
 		public string email { set; get; }
-	}
+
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+    }
 }

@@ -1,14 +1,25 @@
-﻿using System;
+﻿using CsvHelper;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 
 namespace NewAddressBook
 {
-	class AddressBook
+	class AddressBook :IComparer
 	{
 		ArrayList arrayList = new ArrayList();
+		string csvFile = @"C:\Users\vidya\Desktop\DotNet\DummyFiles\csvFile.csv";
+
+		int IComparer.Compare(object x, object y)
+		{
+			Contact m = (Contact)x;
+			Contact n = (Contact)y;
+			return m.firstName.CompareTo(n.firstName);
+		}
 		/// <summary>
 		/// Create Contact
 		/// </summary>
@@ -59,6 +70,12 @@ namespace NewAddressBook
 					break;
                 }
             }
+			///Writing CSV File
+			using(var writer = new StreamWriter(csvFile))
+			using(var csvExport = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+				csvExport.WriteRecords(arrayList);
+            }
 		}
 		/// <summary>
 		/// Remove Duplicate Contact by username
@@ -75,11 +92,25 @@ namespace NewAddressBook
         }
 		public void showAllContacts()
 		{
+			arrayList.Sort(new AddressBook());
 			Console.WriteLine("-----------------------------------");
 			foreach (Contact data in arrayList)
 			{
 				Console.WriteLine($"{data.firstName} {data.lastName} {data.address} {data.city} {data.state} {data.zip} {data.phone} {data.email}");
 				Console.WriteLine("-----------------------------------");
+			}
+			///Reading CSV File
+			using (var reader = new StreamReader(csvFile))
+			using(var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+				var records = csv.GetRecords<Contact>().ToList();
+				Console.WriteLine("Data Fetched Succesfully from CSV File!");
+				Console.WriteLine("-----------------------------------");
+				foreach (var i in records)
+                {
+					Console.WriteLine($"{i.firstName} {i.lastName} {i.address} {i.phone} {i.email}");
+					Console.WriteLine("-----------------------------------");
+				}
 			}
 		}
 		/// <summary>
