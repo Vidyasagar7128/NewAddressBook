@@ -75,9 +75,11 @@ namespace NewAddressBook
         }
 		public void showAllContacts()
 		{
+			Console.WriteLine("-----------------------------------");
 			foreach (Contact data in arrayList)
 			{
 				Console.WriteLine($"{data.firstName} {data.lastName} {data.address} {data.city} {data.state} {data.zip} {data.phone} {data.email}");
+				Console.WriteLine("-----------------------------------");
 			}
 		}
 		/// <summary>
@@ -158,8 +160,28 @@ namespace NewAddressBook
 			}
 		}
 		/// <summary>
+		/// Search Contact using City or State
+		/// </summary>
+		public void SearchContact()
+		{
+			Console.Write("Enter City or State: ");
+			string search = Console.ReadLine();
+			int num = 0;
+			Console.WriteLine("-----------------------------------");
+			foreach (Contact ct in arrayList)
+			{
+				num++;
+				if (search == ct.city || search == ct.state)
+				{
+					Console.WriteLine($"{num}.{ct.firstName} {ct.lastName} {ct.city} {ct.state} {ct.zip} {ct.phone} {ct.email}");
+					Console.WriteLine("-----------------------------------");
+				}
+			}
+		}
+		/// <summary>
 		/// Switch for Repeat Process
 		/// </summary>
+
 		public void repeat()
 		{
 			Console.WriteLine("");
@@ -167,6 +189,7 @@ namespace NewAddressBook
 			Console.WriteLine("press 2 to print contacts :");
 			Console.WriteLine("press 3 to edit contacts :");
 			Console.WriteLine("press 4 to delete contact :");
+			Console.WriteLine("press 5 to search contact :");
 			Console.WriteLine("press 0 to exit program :");
 			int res = int.Parse(Console.ReadLine());
 			switch (res)
@@ -185,6 +208,10 @@ namespace NewAddressBook
 					break;
 				case 4:
 					DeleteData();
+					repeat();
+					break;
+				case 5:
+					SearchContact();
 					repeat();
 					break;
 				case 0:
