@@ -170,10 +170,10 @@ namespace NewAddressBook
 			Console.WriteLine("-----------------------------------");
 			foreach (Contact ct in arrayList)
 			{
-				num++;
 				if (search == ct.city || search == ct.state)
 				{
-					Console.WriteLine($"{num}.{ct.firstName} {ct.lastName} {ct.city} {ct.state} {ct.zip} {ct.phone} {ct.email}");
+					num++;
+					Console.WriteLine($"{num}). {ct.firstName} {ct.lastName} {ct.city} {ct.state} {ct.zip} {ct.phone} {ct.email}");
 					Console.WriteLine("-----------------------------------");
 				}
 			}
