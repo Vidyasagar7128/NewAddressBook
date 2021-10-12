@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace NewAddressBook
 	{
 		ArrayList arrayList = new ArrayList();
 		string csvFile = @"C:\Users\vidya\Desktop\DotNet\DummyFiles\csvFile.csv";
+		string jsonFile = @"C:\Users\vidya\Desktop\DotNet\DummyFiles\jsonFile.json";
 
 		int IComparer.Compare(object x, object y)
 		{
@@ -71,11 +73,20 @@ namespace NewAddressBook
                 }
             }
 			///Writing CSV File
-			using(var writer = new StreamWriter(csvFile))
-			using(var csvExport = new CsvWriter(writer, CultureInfo.InvariantCulture))
+			using (var writer = new StreamWriter(csvFile))
             {
-				csvExport.WriteRecords(arrayList);
-            }
+				using (var csvExport = new CsvWriter(writer, CultureInfo.InvariantCulture))
+				{
+					csvExport.WriteRecords(arrayList);
+				}
+			}
+			///Writing JSON File
+			using (var writer = new StreamWriter(jsonFile))
+			{
+				String jsonData = JsonConvert.SerializeObject(arrayList);
+				//File.WriteAllText(@"jsonFile.json", jsonData);
+				writer.WriteLine(jsonData);
+			}
 		}
 		/// <summary>
 		/// Remove Duplicate Contact by username
@@ -252,3 +263,11 @@ namespace NewAddressBook
 		}
 	}
 }
+/*
+ JsonSerializer serializer = new JsonSerializer();
+			using (var sw = new StreamWriter(csvFile))
+			using (JsonTextWriter writer1 = new JsonTextWriter(sw)
+			{
+				serializer.Serialize(writer1,arrayList);
+			}
+ */
