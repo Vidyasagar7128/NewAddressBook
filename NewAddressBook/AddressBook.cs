@@ -3,6 +3,9 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -12,20 +15,22 @@ namespace NewAddressBook
 {
 	class AddressBook :IComparer
 	{
+		private string connectionPath = ConfigurationManager.ConnectionStrings["conString"].ConnectionString;
+        readonly SqlConnection sqlConnection = new SqlConnection();
 		ArrayList arrayList = new ArrayList();
 		string csvFile = @"C:\Users\vidya\Desktop\DotNet\DummyFiles\csvFile.csv";
 		string jsonFile = @"C:\Users\vidya\Desktop\DotNet\DummyFiles\jsonFile.json";
-
+		
 		int IComparer.Compare(object x, object y)
 		{
 			Contact m = (Contact)x;
 			Contact n = (Contact)y;
 			return m.firstName.CompareTo(n.firstName);
 		}
-		/// <summary>
-		/// Create Contact
-		/// </summary>
-		public void Create()
+        /// <summary>
+        /// Create Contact
+        /// </summary>
+        public void Create(string name)
 		{
 			Console.Write("First Name: ");
 			string firstName = Console.ReadLine();
@@ -84,10 +89,43 @@ namespace NewAddressBook
 			using (var writer = new StreamWriter(jsonFile))
 			{
 				String jsonData = JsonConvert.SerializeObject(arrayList);
-				//File.WriteAllText(@"jsonFile.json", jsonData);
 				writer.WriteLine(jsonData);
 			}
-		}
+			/// Save Users to Database using ADO.NET
+			sqlConnection.ConnectionString = connectionPath;
+			SqlCommand sqlCommand = new SqlCommand();
+            sqlCommand.Connection = sqlConnection;
+            sqlCommand.CommandType = CommandType.StoredProcedure;
+            sqlCommand.CommandText = "sp_newAddressBook";
+
+            sqlCommand.Parameters.Add("@Firstname", SqlDbType.VarChar).Value = firstName;
+            sqlCommand.Parameters.Add("@Lastname", SqlDbType.VarChar).Value = lastName;
+            sqlCommand.Parameters.Add("@Address", SqlDbType.VarChar).Value = address;
+            sqlCommand.Parameters.Add("@City", SqlDbType.VarChar).Value = city;
+            sqlCommand.Parameters.Add("@State", SqlDbType.VarChar).Value = state;
+            sqlCommand.Parameters.Add("@ZIP", SqlDbType.VarChar).Value = zip;
+            sqlCommand.Parameters.Add("@Phone", SqlDbType.VarChar).Value = phone;
+            sqlCommand.Parameters.Add("@Email", SqlDbType.VarChar).Value = email;
+            sqlCommand.Parameters.Add("@BookName", SqlDbType.VarChar).Value = name;
+
+            try
+            {
+                sqlConnection.Open();
+                int count = sqlCommand.ExecuteNonQuery();
+                if (count == -1)
+                    Console.WriteLine($"Contact Created Succesfully...");
+                else
+                    Console.WriteLine($"Failed to Create Contact...");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Message: {e.Message}");
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+        }
 		/// <summary>
 		/// Remove Duplicate Contact by username
 		/// </summary>
@@ -119,10 +157,23 @@ namespace NewAddressBook
 				Console.WriteLine("-----------------------------------");
 				foreach (var i in records)
                 {
-					Console.WriteLine($"{i.firstName} {i.lastName} {i.address} {i.phone} {i.email}");
+					Console.WriteLine($"{i.firstName} {i.lastName} {i.address} {i.city} {i.zip} {i.phone} {i.email}");
 					Console.WriteLine("-----------------------------------");
 				}
 			}
+			///Reading Json File
+			using (var reader = new StreamReader(jsonFile))
+            {
+				var stringData = reader.ReadLine();
+				var data = JsonConvert.DeserializeObject<List<Contact>>(stringData);
+				Console.WriteLine("Data Fetched Succesfully from JSON File!");
+				Console.WriteLine("-----------------------------------");
+				foreach (Contact i in data)
+                {
+					Console.WriteLine($"{i.firstName} {i.lastName} {i.address} {i.city} {i.zip} {i.phone} {i.email}");
+					Console.WriteLine("-----------------------------------");
+				}
+            }
 		}
 		/// <summary>
 		/// Edit Contact using Name
@@ -224,7 +275,7 @@ namespace NewAddressBook
 		/// Switch for Repeat Process
 		/// </summary>
 
-		public void repeat()
+		public void repeat(string bookName)
 		{
 			Console.WriteLine("");
 			Console.WriteLine("press 1 to create contact :");
@@ -237,24 +288,24 @@ namespace NewAddressBook
 			switch (res)
 			{
 				case 1:
-					Create();
-					repeat();
+					Create(bookName);
+					repeat(bookName);
 					break;
 				case 2:
 					showAllContacts();
-					repeat();
+					repeat(bookName);
 					break;
 				case 3:
 					editData();
-					repeat();
+					repeat(bookName);
 					break;
 				case 4:
 					DeleteData();
-					repeat();
+					repeat(bookName);
 					break;
 				case 5:
 					SearchContact();
-					repeat();
+					repeat(bookName);
 					break;
 				case 0:
 					Console.WriteLine("Exit");

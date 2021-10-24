@@ -25,7 +25,7 @@ namespace NewAddressBook
             if (addressBooks.ContainsKey(adbsName))
             {
                 AddressBook addressBook = addressBooks[adbsName];
-                addressBook.repeat();
+                addressBook.repeat(adbsName);
             }
             else
             {
